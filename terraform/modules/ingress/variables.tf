@@ -27,6 +27,7 @@ variable "region" {
 variable "external_address" {
   type    = string
   default = null
+  description = "Reserved External Static IP"
 }
 
 variable "cert_issuer_email" {
