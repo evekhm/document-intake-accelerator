@@ -5,7 +5,7 @@ export BASE_DIR=$(pwd)
 export TF_LOG_PATH="$BASE_DIR"/tf.log
 export TF_LOG="DEBUG"
 export TF_VAR_api_domain=$API_DOMAIN
-
+export API_DOMAIN=${API_DOMAIN:-"cda.endpoints.${PROJECT_ID}.cloud.goog"}
 export TF_VAR_project_id=$PROJECT_ID
 export TF_VAR_docai_project_id=${DOCAI_PROJECT_ID:-$PROJECT_ID}
 

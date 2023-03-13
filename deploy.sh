@@ -34,6 +34,32 @@ fi
 
 
 gcloud container clusters get-credentials main-cluster --region $REGION --project $PROJECT_ID
+
+K8S_INGRESS="default-ingress"
+K8S_INGRESS_IP=$(kubectl describe ingress default-ingress | grep Address | awk '{print $2}')
+K8S_NAME=cda
+
+# Map the FQDN to the IP address
+cat <<EOF > "${K8S_NAME}"-openapi.yaml
+swagger: "2.0"
+info:
+  description: "$K8S_NAME"
+  title: "$K8S_NAME"
+  version: "1.0.0"
+host: "${FQDN}"
+x-google-endpoints:
+- name: "${FQDN}"
+  target: "$K8S_INGRESS_IP"
+paths: {}
+
+EOF
+
+gcloud endpoints services deploy ${K8S_NAME}-openapi.yaml
+rm ${K8S_NAME}-openapi.yaml
+
+kubectl annotate ingress ${K8S_INGRESS} nginx.ingress.kubernetes.io/cors-allow-origin=https-
+kubectl annotate ingress ${K8S_INGRESS} nginx.ingress.kubernetes.io/cors-allow-origin=https://${FQDN}
+
 skaffold run -p prod --default-repo=gcr.io/${PROJECT_ID} | tee -a "$LOG"
 
 #TODO terraform to re-deploy cloud-run instead

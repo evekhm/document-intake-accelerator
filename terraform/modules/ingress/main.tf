@@ -36,6 +36,7 @@ locals {
       : google_compute_address.ingress_ip_address[0].address
     )
   }
+
 module "cert_manager" {
   source = "terraform-iaac/cert-manager/kubernetes"
 
@@ -62,11 +63,11 @@ module "nginx-controller" {
   version   = "2.1.0"
   namespace = "ingress-nginx"
 
-  ip_address = var.external_address != null ? var.external_address: google_compute_address.ingress_ip_address[0].address
+  ip_address = local.address
 
   # TODO: does this require cert_manager up and running or can they be completed in parallel
   depends_on = [
-    kubernetes_namespace.ingress_nginx
+    module.cert_manager, kubernetes_namespace.ingress_nginx
   ]
 }
 
