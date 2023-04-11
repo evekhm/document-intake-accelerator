@@ -377,10 +377,10 @@ module "validation_bigquery" {
     entities = {
       friendly_name       = "Entities"
       labels              = {}
-      query               = <<EOF
+      query               = <<-EOS
       "SELECT * FROM
           ${var.project_id}.validation.validation_table"
-      EOF
+      EOS
       use_legacy_sql      = false
       deletion_protection = false
     }
