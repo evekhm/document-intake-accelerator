@@ -374,10 +374,13 @@ module "validation_bigquery" {
   source = "../../modules/bigquery"
   project_id = var.project_id
   views = {
-    population = {
+    entities = {
       friendly_name       = "Entities"
       labels              = {}
-      query               = "SELECT * FROM ${var.project_id}.validation.validation_table"
+      query               = <<EOF
+      "SELECT * FROM
+          ${var.project_id}.validation.validation_table"
+      EOF
       use_legacy_sql      = false
       deletion_protection = false
     }
