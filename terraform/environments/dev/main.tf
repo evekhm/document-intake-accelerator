@@ -372,6 +372,16 @@ module "validation_bigquery" {
     time_sleep.wait_for_project_services
   ]
   source = "../../modules/bigquery"
+  project_id = var.project_id
+  views = {
+    population = {
+      friendly_name       = "Entities"
+      labels              = {}
+      query               = "SELECT * FROM ${var.project_id}.validation.validation_table"
+      use_legacy_sql      = false
+      deletion_protection = false
+    }
+  }
 }
 
 # ================= Document AI Parsers ====================

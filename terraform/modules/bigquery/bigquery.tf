@@ -86,3 +86,20 @@ resource "google_bigquery_table" "table_id" {
 EOF
 
 }
+
+resource "google_bigquery_table" "views" {
+  depends_on          = google_bigquery_table.table_id
+  for_each            = var.views
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.data_set.dataset_id
+  table_id            = each.key
+  friendly_name       = each.value.friendly_name
+  description         = "Terraform managed."
+  labels              = each.value.labels
+  deletion_protection = each.value.deletion_protection
+
+  view {
+    query          = each.value.query
+    use_legacy_sql = each.value.use_legacy_sql
+  }
+}
