@@ -148,7 +148,7 @@ resource "google_cloud_run_service" "cloudrun-service" {
       }
     }
     spec {
-      timeoutSeconds = 600
+      timeout_seconds = 600
       containers {
         image = "gcr.io/${var.project_id}/${var.name}-image:latest" #Image to connect pubsub to cloud run to processtask API and fetch data from firestore
         ports {
