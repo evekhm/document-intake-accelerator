@@ -153,7 +153,7 @@ resource "google_cloud_run_service" "cloudrun-service" {
         ports {
           container_port = 8000
         }
-        timeoutSeconds: 600
+        timeoutSeconds = 600
         env {
           name  = "BATCH_PROCESS_QUOTA" # Concurrent Batch Process QUOTA
           value = "5"
