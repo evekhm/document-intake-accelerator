@@ -148,12 +148,13 @@ resource "google_cloud_run_service" "cloudrun-service" {
       }
     }
     spec {
+      timeoutSeconds = 600
       containers {
         image = "gcr.io/${var.project_id}/${var.name}-image:latest" #Image to connect pubsub to cloud run to processtask API and fetch data from firestore
         ports {
           container_port = 8000
         }
-        timeoutSeconds = 600
+
         env {
           name  = "BATCH_PROCESS_QUOTA" # Concurrent Batch Process QUOTA
           value = "5"
