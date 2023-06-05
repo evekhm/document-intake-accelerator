@@ -3,7 +3,7 @@ import json
 import os
 import traceback
 import uuid
-
+import time
 import requests
 from config import DOCUMENT_STATUS_URL
 from fastapi import APIRouter
@@ -53,6 +53,8 @@ router = APIRouter(prefix="/start-pipeline", tags=["Start Pipeline"])
 
 @router.post("/run")
 async def start_pipeline(request: Request, response: Response):
+  start_time = time.time()
+
   body = await request.body()
   if not body or body == "":
     response.status_code = status.HTTP_400_BAD_REQUEST
@@ -136,7 +138,7 @@ async def start_pipeline(request: Request, response: Response):
             case_id = case_ids[dir_name]
           count = count + 1
           Logger.info(
-              f"Handling {count} document - case_id={case_id}, file_path={blob.name}, "
+              f"Handling {count}(th) document - case_id={case_id}, file_path={blob.name}, "
               f"file_name={blob_filename}, event_id={event_id}")
 
           # create a record in database for uploaded document
@@ -199,14 +201,17 @@ async def start_pipeline(request: Request, response: Response):
           else:
             Logger.error(f"Could not retrieve document by id {uid}")
 
-      Logger.info(f"Handled {count} files and"
+      Logger.info(f"Uploaded {count} documents and"
                   f" sending {len(message_list)} items in message_list")
       # Pushing Message To Pubsub
       pubsub_msg = f"batch moved to bucket"
       message_dict = {"message": pubsub_msg, "message_list": message_list}
       publish_document(message_dict)
-      Logger.info(f"Message for event_id {event_id} published"
-                  f" successfully {uid_list} with {message_list}")
+
+      process_time = time.time() - start_time
+      time_elapsed = round(process_time * 1000)
+      Logger.info(f"start_pipeline completed within {time_elapsed} ms for event_id {event_id} with {count} documents "
+                  f"{message_list}")
 
       return {
           "status": f"Files for event_id {event_id} uploaded"

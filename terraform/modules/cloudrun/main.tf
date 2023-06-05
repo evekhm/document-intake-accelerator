@@ -135,7 +135,9 @@ resource "google_cloud_run_service" "cloudrun-service" {
     metadata {
       annotations = {
         # Limit scale up to prevent any cost blow outs!
-        "autoscaling.knative.dev/maxScale" = "5"
+        "autoscaling.knative.dev/maxScale" = "10"
+        # Prevent Cold Start
+        "autoscaling.knative.dev/minScale" = "1"
         # Use the VPC Connector
         "run.googleapis.com/vpc-access-connector" = var.vpc_connector_name
         # all egress from the service should go through the VPC Connector
@@ -151,6 +153,7 @@ resource "google_cloud_run_service" "cloudrun-service" {
         ports {
           container_port = 8000
         }
+        timeoutSeconds: 600
         env {
           name  = "BATCH_PROCESS_QUOTA" # Concurrent Batch Process QUOTA
           value = "5"
