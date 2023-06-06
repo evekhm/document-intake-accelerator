@@ -102,7 +102,7 @@ async def start_pipeline(request: Request, response: Response):
       return "", status.HTTP_204_NO_CONTENT
 
     Logger.info(
-        f"Starting pipeline to process documents inside {bucket_name} bucket and "
+        f"start_pipeline - Starting pipeline to process documents inside {bucket_name} bucket and "
         f"{dirs} folder with event_id={event_id}")
 
     global gcs
@@ -123,7 +123,7 @@ async def start_pipeline(request: Request, response: Response):
       count = 0
 
       for blob in blob_list:
-        Logger.info(f"Handling {blob.name}")
+        Logger.debug(f"Handling {blob.name}")
         if blob.name and not blob.name.endswith('/') and blob.name != START_PIPELINE_FILENAME:
           mime_type = blob.content_type
           if mime_type not in MIME_TYPES:
@@ -138,7 +138,7 @@ async def start_pipeline(request: Request, response: Response):
             case_id = case_ids[dir_name]
           count = count + 1
           Logger.info(
-              f"Handling {count}(th) document - case_id={case_id}, file_path={blob.name}, "
+              f"start_pipeline - Handling {count}(th) document - case_id={case_id}, file_path={blob.name}, "
               f"file_name={blob_filename}, event_id={event_id}")
 
           # create a record in database for uploaded document
@@ -201,7 +201,7 @@ async def start_pipeline(request: Request, response: Response):
           else:
             Logger.error(f"Could not retrieve document by id {uid}")
 
-      Logger.info(f"Uploaded {count} documents and"
+      Logger.info(f"start_pipeline - Uploaded {count} documents and"
                   f" sending {len(message_list)} items in message_list")
       # Pushing Message To Pubsub
       pubsub_msg = f"batch moved to bucket"
@@ -210,7 +210,7 @@ async def start_pipeline(request: Request, response: Response):
 
       process_time = time.time() - start_time
       time_elapsed = round(process_time * 1000)
-      Logger.info(f"start_pipeline completed within {time_elapsed} ms for event_id {event_id} with {count} documents "
+      Logger.info(f"start_pipeline - completed within {time_elapsed} ms for event_id {event_id} with {count} documents "
                   f"{message_list}")
 
       return {
