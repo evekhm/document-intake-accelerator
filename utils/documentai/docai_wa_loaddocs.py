@@ -196,19 +196,19 @@ def get_args():
   args_parser = argparse.ArgumentParser(
       formatter_class=argparse.RawTextHelpFormatter,
       description="""
-      script to Test Document AI Extraction.
+      script to Batch load PDF data into the Document AI Warehouse.
       """,
       epilog="""
       Examples:
 
-      python generate_images.py -f=gs-path-to-form.pdf -d=gs-path-to-dir [-c=doc_class]]
+      python docai_wa_loaddocs.py -d=gs://my-folder [-n=UM_Guidelines]]
       """)
 
   args_parser.add_argument('-d', dest="dir_uri",
-                           help="Path to gs directory uri")
+                           help="Path to gs directory uri, containing data with PDF documents to be loaded. All original structure of sub-folders will be preserved.")
   args_parser.add_argument('-n', dest="root_name",
                            help="Name of the root folder inside DW where "
-                                "documents will be loaded")
+                                "documents will be loaded. When skipped, will use the same name of the folder being loaded from.")
   return args_parser
 
 
