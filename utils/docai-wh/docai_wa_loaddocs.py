@@ -18,18 +18,20 @@ DOCAI_WH_PROJECT_NUMBER = os.environ["DOCAI_WH_PROJECT_NUMBER"]  # Set this to y
 caller_user = f"user:{os.environ['CALLER_USER']}"  # service account
 PROCESSOR_ID = os.environ.get("PROCESSOR_ID")     # Processor ID inside DW project
 GCS_OUTPUT_BUCKET = os.environ.get("DOCAI_OUTPUT_BUCKET")  # GCS Folder to be used for the DocAI output
+DOCAI_PROJECT_NUMBER = os.environ.get("DOCAI_PROJECT_NUMBER")  # GCS Folder to be used for the DocAI output
 
 folder_schema_path = "./schema_files/folder_schema.json"
 document_schema_path = "./schema_files/document_schema.json"
 
 assert DOCAI_WH_PROJECT_NUMBER, "DOCAI_WH_PROJECT_NUMBER not set"
+assert DOCAI_PROJECT_NUMBER, "DOCAI_PROJECT_NUMBER not set"
 assert caller_user, "CALLER_USER not set"
 assert PROCESSOR_ID, "PROCESSOR_ID not set"
 assert GCS_OUTPUT_BUCKET, "DOCAI_OUTPUT_BUCKET not set"
 
 dw_utils = DocumentWarehouseUtils(project_number=DOCAI_WH_PROJECT_NUMBER,
                                   api_location=API_LOCATION)
-docai_utils = DocumentaiUtils(project_number=DOCAI_WH_PROJECT_NUMBER,
+docai_utils = DocumentaiUtils(project_number=DOCAI_PROJECT_NUMBER,
                               api_location=API_LOCATION)
 
 storage_client = storage.Client()
@@ -219,23 +221,3 @@ if __name__ == "__main__":
   dir_uri = args.dir_uri
   root_name = args.root_name
   main(dir_uri, root_name)
-
-'''
-Instructions:
-
-1) Service Account to execute script must have following roles:
-- 
--
-- 
-
-2) Need to have access to GCS-out bucket for DW
-
-3) For external url (in a different project): 
-PROJECT_ID - id of the project from where Files are being loaded into the Document Warehouse
-export DOCAI_WH_PROJECT_NUMBER=
-export PROJECT_ID=
-#  gcloud projects add-iam-policy-binding $PROJECT_ID --member="serviceAccount:service-$DOCAI_WH_PROJECT_NUMBER@gcp-sa-cloud-cw.iam.gserviceaccount.com"  --role="roles/storage.objectViewer"
-#  gcloud projects add-iam-policy-binding cda-docai-warehouse --member="serviceAccount:service-35407211402@gcp-sa-cloud-cw.iam.gserviceaccount.com"  --role="roles/storage.objectViewer"
-
-# Access to GCS_OUT inside 
-'''
