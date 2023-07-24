@@ -82,8 +82,8 @@ def get_metadata_properties(key_values, schema) -> List[
           one_property.integer_values = contentwarehouse_v1.IntegerArray(
             values=[int(value)])
         elif value_type == "date_time_type_options":
-            current_date = datetime.datetime.now()
-            print(current_date.strftime('%Y-%m-%dT%H:%M:%S.%f%z'))
+            # current_date = datetime.datetime.now()
+            # print(current_date.strftime('%Y-%m-%dT%H:%M:%S.%f%z'))
             date_time = pd.to_datetime(value)
             dt = datetime_pb2.DateTime(year=date_time.year,
                                        month=date_time.month,
@@ -91,17 +91,15 @@ def get_metadata_properties(key_values, schema) -> List[
                                        hours=date_time.hour,
                                        minutes=date_time.minute,
                                        seconds=date_time.second)
-            dt = datetime_pb2.DateTime()
 
-            timestamp = timestamp_pb2.Timestamp()
-            timestamp.FromDatetime(
-                datetime.datetime.utcnow()
-                + datetime.timedelta()
-            )
+            # timestamp = timestamp_pb2.Timestamp()
+            # timestamp.FromDatetime(
+            #     datetime.datetime.utcnow()
+            #     + datetime.timedelta()
+            # )
             # timestamp.timestamp_value = current_date.strftime(
             #   '%Y-%m-%dT%H:%M:%S.%f%z')
-            one_property.date_time_values = contentwarehouse_v1.DateTimeArray(
-              values=[timestamp])
+            one_property.date_time_values = contentwarehouse_v1.DateTimeArray(values=[dt])
         else:
           Logger.warning(
             f"Unsupported property type {value_type} for  {key} = {value} Skipping. ")
