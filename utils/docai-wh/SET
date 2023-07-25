@@ -7,7 +7,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DOCAI_WH_PROJECT_ID=${DOCAI_WH_PROJECT_ID:-$PROJECT_ID}
 export DOCAI_WH_PROJECT_NUMBER=$(gcloud projects describe  "${DOCAI_WH_PROJECT_ID}" --format='get(projectNumber)')
 export SA_DOCAI_WH="service-${DOCAI_WH_PROJECT_NUMBER}@gcp-sa-cloud-cw.iam.gserviceaccount.com"
-#gcloud config set project $DOCAI_WH_PROJECT_ID
+gcloud config set project $DOCAI_WH_PROJECT_ID
 export DOCAI_OUTPUT_BUCKET="$DOCAI_WH_PROJECT_ID-docai-output"  # Bucket for the DocAI output
 export PROJECT_ID=${PROJECT_ID:-$DOCAI_WH_PROJECT_ID}
 

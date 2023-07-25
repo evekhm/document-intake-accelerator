@@ -1,18 +1,25 @@
 # Quickstart Guide to Batch Upload Documents into the DocAi Warehouse
 
-# Table of contents
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
-    - [Provision DocAI Warehouse](#provision-docai-warehouse)
-    - [Prepare GCS Bucket with Data](#prepare-gcs-bucket-with-data)
-    - [Create OCR processor for extracting text data from the PDF forms](#create-ocr-processor-for-extracting-text-data-from-the-pdf-forms)
-    - [Set Env Variables](#set-env-variables)
-- [Setup](#setup)
+  * [Provision DocAI Warehouse](#provision-docai-warehouse)
+  * [Prepare GCS Bucket with Data](#prepare-gcs-bucket-with-data)
+  * [Create OCR processor for extracting text data from the PDF forms](#create-ocr-processor-for-extracting-text-data-from-the-pdf-forms)
+  * [Set Env Variables](#set-env-variables)
+  * [Cross-Org Access (Only when required)](#cross-org-access-only-when-required)
+- [Setup ](#setup)
 - [Execution](#execution)
-- [Troubleshooting](#troubleshooting)
-    - [Error 403 IAM_PERMISSION_DENIED Permission Denied](#error-403-iam_permission_denied-permission-denied)
-    - 
+  * [Batch load of PDF Data using OCR Parser (No Properties Extraction)](#batch-load-of-pdf-data-using-ocr-parser-no-properties-extraction)
+  * [Generate draft document schema using DocAi output](#generate-draft-document-schema-using-docai-output)
+  * [Upload document schema](#upload-document-schema)
+  * [Batch Upload using document schema (With properties extraction)](#batch-upload-using-document-schema)
+- [Troubleshooting ](#troubleshooting)
+  * [Error 403 IAM_PERMISSION_DENIED Permission Denied](#error-403-iam_permission_denied-permission-denied)
+
+<!-- TOC end -->
+
 ## Introduction
 This is a utility that allows a batch upload of Folders/Files stored in GCS bucket into the Document WH using Processor to extract structured data.
 Supported Features:
@@ -110,6 +117,7 @@ Works well for Large (<200 pages) pdf documents, that could be loaded into DocAI
 Make sure to create OCR processor inside `DOCAI_PROJECT_ID`
 ```shell
 export PROCESSOR_ID=<OCR_PROCESSOR>
+export DOCAI_PROJECT_ID
 source SET
 GOOGLE_APPLICATION_CREDENTIALS=${KEY_PATH}  load_docs.py -d gs://<PATH-TO-FOLDER> [-n <NAME-OF-THE-ROOT-FOLDER]
 ```
@@ -176,15 +184,14 @@ GOOGLE_APPLICATION_CREDENTIALS=${KEY_PATH} python upload_schema.py -f /Users/xxx
 ````
 
 
-### Batch Upload using document schema
+### Batch Upload using document schema (With properties extraction)
 - `display_name` of the document schema generated and uploaded on the previous steps corresponds to the display name of the processor.
 - If you have not changed json file before uploading of the schema, when using PROCESSOR_ID, everything will work out-of the box.
 - If you have changed display_name of the schema prior to uploading it, you will need to provide schema_id as input parameter instead of PROCESSOR_ID set as env variable.
 
 ```shell
-export PROCESSOR_ID=<CDE_PROCESSOR>
 source SET
-GOOGLE_APPLICATION_CREDENTIALS=${KEY_PATH} python generate_schema.py -f gs://<PATH-TO-PDF>.pdf --options
+PROCESSOR_ID=<CDE_PROCESSOR> GOOGLE_APPLICATION_CREDENTIALS=${KEY_PATH} python generate_schema.py -f gs://<PATH-TO-PDF>.pdf --options -n Test-Forms
 ```
 
 

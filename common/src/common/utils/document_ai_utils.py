@@ -124,6 +124,7 @@ class DocumentaiUtils:
         parent = self.get_parent()
 
         name = f"{parent}/processors/{processor_id}"
+        Logger.info(f"batch_extraction - processor name = {name}")
         processor = client.get_processor(name=name)
         input_docs = [documentai.GcsDocument(gcs_uri=doc_uri,
                                              mime_type=PDF_MIME_TYPE)

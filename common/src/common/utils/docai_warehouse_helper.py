@@ -13,23 +13,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import traceback
-from typing import List
-from google.cloud import contentwarehouse_v1
-import proto
-
 import json
-from .document_warehouse_utils import DocumentWarehouseUtils
-from common.utils.logging_handler import Logger
-from google.type import datetime_pb2
-from google.protobuf import timestamp_pb2
-import pandas as pd
+import traceback
 from typing import Any
 from typing import Dict
+from typing import List
+
+import pandas as pd
+import proto
+from google.cloud import contentwarehouse_v1
+from google.type import datetime_pb2
+
 from common.utils.document_ai_utils import get_key_values_dic
+from common.utils.logging_handler import Logger
+from .document_warehouse_utils import DocumentWarehouseUtils
 
 
-def get_key_value_pairs(document_ai_output) -> List[tuple[str, str]]:
+def get_key_value_pairs(document_ai_output):
   json_string = proto.Message.to_json(document_ai_output)
   data = json.loads(json_string)
   document_entities: Dict[str, Any] = {}
@@ -52,7 +52,7 @@ def get_key_value_pairs(document_ai_output) -> List[tuple[str, str]]:
         names.append((key_name, key_value))
   return names
 
-import datetime
+
 def get_metadata_properties(key_values, schema) -> List[
   contentwarehouse_v1.Property]:
   def get_type_using_schema(property_name):
@@ -92,14 +92,13 @@ def get_metadata_properties(key_values, schema) -> List[
                                        seconds=date_time.second,
                                        utc_offset={})
             one_property.date_time_values = contentwarehouse_v1.DateTimeArray(values=[dt])
-
         else:
           Logger.warning(
             f"Unsupported property type {value_type} for  {key} = {value} Skipping. ")
           continue
         metadata_properties.append(one_property)
 
-      except TypeError as ex:
+      except Exception as ex:
         Logger.warning(f"Could not load {key} = {value} of type {value_type} as property. Skipping. Exception = {ex}")
         continue
 

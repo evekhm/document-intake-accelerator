@@ -18,7 +18,7 @@ from common.utils.document_ai_utils import DocumentaiUtils
 from common.utils import storage_utils, helper
 
 import json
-from typing import Optional, List
+from typing import List
 
 
 from google.cloud import contentwarehouse_v1
@@ -152,8 +152,11 @@ def main(root_name):
       (parent_id, reference_id) = files_to_parse[f_uri]
       schema = dw_utils.get_document_schema(document_schema_id)
       metadata_properties = get_metadata_properties(keys, schema)
-      upload_document_gcs(f_uri, document_schema_id, parent_id, reference_id,
-                          document_ai_output, metadata_properties)
+      try:
+        upload_document_gcs(f_uri, document_schema_id, parent_id, reference_id,
+                            document_ai_output, metadata_properties)
+      except Exception as ex:
+        Logger.error(f"Failed to upload {f_uri} - {ex}")
 
   process_time = time.time() - initial_start_time
   time_elapsed = round(process_time)
@@ -168,9 +171,6 @@ def main(root_name):
     Logger.info(
       f"Following files could not be handled (Document page number exceeding limit of 15 pages?")
     ",".join(error_files)
-
-
-
 
 
 def get_type(value: str):
